@@ -102,7 +102,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sweet Progress</title>
   </head>
-  <body style="margin:0;padding:0;background:#ffecf7;" bgcolor="#ffecf7">
+  <body style="margin:0;padding:0;background:#ffecf7;overflow-x:hidden;max-width:100vw;" bgcolor="#ffecf7">
     <?php if (!$email_mode): ?>
     <style>
       @keyframes popIn { 0% { transform: scale(0.7); opacity: 0.2; } 60% { transform: scale(1.06); opacity: 1; } 100% { transform: scale(1); } }
@@ -117,7 +117,7 @@
       @keyframes shimmerY { 0% { background-position: 50% 0%; } 100% { background-position: 50% 200%; } }
       @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
       @keyframes drift { 0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(-120vh) translateX(var(--driftX, 0)) rotate(360deg); opacity: 0; } }
-      .bg-gradient { position:fixed; inset:0; z-index:0; background: radial-gradient(1200px 800px at 10% 110%, rgba(255, 197, 221, 0.55), transparent 50%), radial-gradient(1000px 700px at 90% -10%, rgba(200, 162, 255, 0.30), transparent 40%), linear-gradient(135deg, #ffe6f2, #ffecf7 40%, #ffe3f0 70%); filter: saturate(108%); animation: shimmerX 12s linear infinite; background-size: 200% 200%; }
+      .bg-gradient { position:fixed; inset:0; z-index:0; background: radial-gradient(1200px 800px at 10% 110%, rgba(255, 197, 221, 0.55), transparent 50%), radial-gradient(1000px 700px at 90% -10%, rgba(200, 162, 255, 0.30), transparent 40%), linear-gradient(135deg, #ffe6f2, #ffecf7 40%, #ffe3f0 70%); filter: saturate(108%); animation: shimmerX 12s linear infinite; background-size: 200% 200%; max-width:100%; overflow:hidden; }
       .titleShimmer { background: linear-gradient(90deg, #ff2b83, #ff86b8, #ff2b83); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmerX 5s ease-in-out infinite; text-shadow: 0 2px 18px rgba(255, 43, 131, 0.25); }
       #cardWrap { display:inline-block; will-change: transform, filter; transform-style: preserve-3d; transition: transform 300ms ease, filter 300ms ease; filter: drop-shadow(0 14px 28px rgba(255, 43, 131, 0.24)) drop-shadow(0 4px 10px rgba(0,0,0,0.08)); }
       #cardWrap:hover { filter: drop-shadow(0 18px 36px rgba(255, 43, 131, 0.30)) drop-shadow(0 6px 14px rgba(0,0,0,0.10)); }
@@ -155,13 +155,13 @@
         <td align="center" style="padding:20px 12px;">
           <!-- Card container -->
           <?php if (!$email_mode): ?><div id="cardWrap" class="ambientPulse"><?php endif; ?>
-          <table role="presentation" width="360" cellpadding="0" cellspacing="0" border="0" style="width:360px;max-width:94%;background:#ffffff;border-radius:16px;border:2px solid #ffc5dd;" bgcolor="#ffffff">
+          <table role="presentation" width="360" cellpadding="0" cellspacing="0" border="0" style="width:360px;max-width:94%;background:#ffffff;border-radius:16px;border:2px solid #ffc5dd;overflow:hidden;" bgcolor="#ffffff">
             <tr>
               <td align="center" style="padding:14px 20px 0 20px;">
                 <?php if ((int)$streakDays > 0): ?>
                   <span style="display:inline-block;background:#ffe3f0;border:1px solid #ffb6d0;color:#ff2b83;border-radius:999px;padding:6px 12px;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;<?php if (!$email_mode) { echo 'animation:popIn 500ms ease-out both;'; } ?>">
                     <span role="img" aria-label="fire" title="fire" style="margin-right:6px;">🔥</span>
-                    Current streak: <strong style="color:#ff2b83;">&<?php echo (int)$streakDays; ?></strong> day<?php echo ((int)$streakDays === 1 ? '' : 's'); ?>
+                    Current streak: <strong style="color:#ff2b83;"><?php echo (int)$streakDays; ?></strong> day<?php echo ((int)$streakDays === 1 ? '' : 's'); ?>
                   </span>
                   <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:16px;color:#b34a7f;margin-top:6px;">
                     Maintain your streak (no beauty point loss) and you’ll earn <?php echo (int)$streakDays; ?> kisses at the end of today.
@@ -234,10 +234,10 @@
                 <?php if ($nextPointWithLabel !== null): ?>
                 <div style="margin:4px 4px 10px 4px;">
                   <span class="nextBubble js-ripple" style="<?php if ($email_mode) { echo 'background:#fff7fb;border:1px solid #ffb6d0;border-radius:14px;padding:6px 10px;color:#ff2b83;'; } ?>">
-                    <?php if ($nextIconAtNext): ?><span style="margin-right:6px;">&<?php echo htmlspecialchars($nextIconAtNext, ENT_QUOTES, 'UTF-8'); ?></span><?php endif; ?>
-                    Next at <strong style="color:#ff2b83;">&<?php echo (int)$nextPointWithLabel; ?></strong>:
-                    <span style="color:#b34a7f;">&<?php echo htmlspecialchars($nextLabelText ? $nextLabelText : 'sweet surprise', ENT_QUOTES, 'UTF-8'); ?></span>
-                    <?php if ($pointsToNext !== null): ?><span style="color:#cc6a9a;margin-left:6px;">(&<?php echo (int)$pointsToNext; ?> to go)</span><?php endif; ?>
+                    <?php if ($nextIconAtNext): ?><span style="margin-right:6px;"><?php echo htmlspecialchars($nextIconAtNext, ENT_QUOTES, 'UTF-8'); ?></span><?php endif; ?>
+                    Next at <strong style="color:#ff2b83;"><?php echo (int)$nextPointWithLabel; ?></strong>:
+                    <span style="color:#b34a7f;"><?php echo htmlspecialchars($nextLabelText ? $nextLabelText : 'sweet surprise', ENT_QUOTES, 'UTF-8'); ?></span>
+                    <?php if ($pointsToNext !== null): ?><span style="color:#cc6a9a;margin-left:6px;">(<?php echo (int)$pointsToNext; ?> to go)</span><?php endif; ?>
                   </span>
                 </div>
                 <?php endif; ?>
@@ -323,113 +323,7 @@
                 </div>
               </td>
             </tr>
-            <!-- Footer-like kisses and prizes section -->
-            <tr>
-              <td align="left" style="padding:12px 12px 14px 12px;border-top:1px solid #ffc5dd;background:#fffafc;" bgcolor="#fffafc">
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                  <tr>
-                    <td style="padding:0 0 8px 0;">
-                      <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:16px;color:#b34a7f;">
-                        <span style="color:#ff2b83;font-weight:bold;">Kisses:</span>
-                        <span style="color:#b34a7f;"><?php echo $kisses; ?></span>
-                      </div>
-                      <?php if ($nextPrizeName !== null): ?>
-                      <div style="margin-top:6px;">
-                        <?php if ($email_mode): ?>
-                        <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#b34a7f;">
-                          Next prize: <span style="color:#ff2b83; font-weight:bold;"><?php echo htmlspecialchars($nextPrizeName, ENT_QUOTES, 'UTF-8'); ?></span>
-                          (<?php echo (int)$kissesToNextPrize; ?> kisses away)
-                        </div>
-                        <?php else: ?>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                          <span role="img" aria-label="next prize" title="next prize" style="font-size:16px;"><?php echo htmlspecialchars($nextPrizeEmoji, ENT_QUOTES, 'UTF-8'); ?></span>
-                          <div style="flex:1;">
-                            <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#b34a7f;">
-                              Next prize: <span style="color:#ff2b83; font-weight:bold;"><?php echo htmlspecialchars($nextPrizeName, ENT_QUOTES, 'UTF-8'); ?></span>
-                              <span style="color:#cc6a9a;">(<?php echo (int)$kissesToNextPrize; ?> away)</span>
-                            </div>
-                            <div class="miniBar" style="margin-top:4px;height:6px;">
-                              <div class="miniBarFill" style="width:<?php echo (int)$kissProgressPercent; ?>%; height:6px;"></div>
-                            </div>
-                          </div>
-                        </div>
-                        <?php endif; ?>
-                      </div>
-                      <?php endif; ?>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <?php if ($email_mode): ?>
-                      <!-- Email-friendly horizontal list via table cells -->
-                      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                        <tr>
-                          <?php foreach ($kissPrizes as $prize): ?>
-                            <td valign="top" style="padding-right:8px;">
-                              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="background:#ffe3f0;border:1px solid #ffb6d0;border-radius:12px;">
-                                <tr>
-                                  <td align="center" style="padding:8px;">
-                                    <?php
-                                      $hasImg = isset($prize['img']) && trim((string)$prize['img']) !== '';
-                                      $hasEmoji = isset($prize['emoji']) && trim((string)$prize['emoji']) !== '';
-                                      $alt = htmlspecialchars(isset($prize['name']) ? $prize['name'] : 'prize', ENT_QUOTES, 'UTF-8');
-                                    ?>
-                                    <?php if ($hasImg): ?>
-                                      <img src="<?php echo htmlspecialchars($prize['img'], ENT_QUOTES, 'UTF-8'); ?>" width="56" height="56" alt="<?php echo $alt; ?>" style="display:block;border:0;outline:none;text-decoration:none;border-radius:8px;background:#ffffff;" />
-                                    <?php elseif ($hasEmoji): ?>
-                                      <span role="img" aria-label="<?php echo $alt; ?>" title="<?php echo $alt; ?>" style="display:block;width:56px;height:56px;line-height:56px;font-size:32px;text-align:center;border-radius:8px;background:#ffffff;"><?php echo htmlspecialchars($prize['emoji'], ENT_QUOTES, 'UTF-8'); ?></span>
-                                    <?php else: ?>
-                                      <span role="img" aria-label="<?php echo $alt; ?>" title="<?php echo $alt; ?>" style="display:block;width:56px;height:56px;line-height:56px;font-size:28px;text-align:center;border-radius:8px;background:#ffffff;">🎁</span>
-                                    <?php endif; ?>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td align="center" style="padding:0 8px 8px 8px;">
-                                    <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#b34a7f;white-space:nowrap;margin-bottom:2px;">
-                                      <?php echo $alt; ?>
-                                    </div>
-                                    <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#ff2b83;white-space:nowrap;">
-                                      <?php echo (int)$prize['cost']; ?> kisses
-                                    </div>
-                                  </td>
-                                </tr>
-                              </table>
-                            </td>
-                          <?php endforeach; ?>
-                        </tr>
-                      </table>
-                      <?php else: ?>
-                      <!-- Web preview: allow horizontal scroll if needed -->
-                      <div class="prizeScroller" style="white-space:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;">
-                        <?php foreach ($kissPrizes as $prize): ?>
-                          <span class="prizeCard js-ripple" style="display:inline-block;vertical-align:top;margin-right:8px;background:#ffe3f0;border:1px solid #ffb6d0;border-radius:12px;padding:8px;">
-                            <?php
-                              $hasImg = isset($prize['img']) && trim((string)$prize['img']) !== '';
-                              $hasEmoji = isset($prize['emoji']) && trim((string)$prize['emoji']) !== '';
-                              $alt = htmlspecialchars(isset($prize['name']) ? $prize['name'] : 'prize', ENT_QUOTES, 'UTF-8');
-                            ?>
-                            <?php if ($hasImg): ?>
-                              <img class="prizeImg" src="<?php echo htmlspecialchars($prize['img'], ENT_QUOTES, 'UTF-8'); ?>" width="56" height="56" alt="<?php echo $alt; ?>" style="display:block;border:0;outline:none;text-decoration:none;border-radius:8px;background:#ffffff;" />
-                            <?php elseif ($hasEmoji): ?>
-                              <span role="img" aria-label="<?php echo $alt; ?>" title="<?php echo $alt; ?>" style="display:block;width:56px;height:56px;line-height:56px;font-size:32px;text-align:center;border-radius:8px;background:#ffffff;"><?php echo htmlspecialchars($prize['emoji'], ENT_QUOTES, 'UTF-8'); ?></span>
-                            <?php else: ?>
-                              <span role="img" aria-label="<?php echo $alt; ?>" title="<?php echo $alt; ?>" style="display:block;width:56px;height:56px;line-height:56px;font-size:28px;text-align:center;border-radius:8px;background:#ffffff;">🎁</span>
-                            <?php endif; ?>
-                            <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#b34a7f;margin-top:6px;text-align:center;white-space:nowrap;">
-                              <?php echo $alt; ?>
-                            </div>
-                            <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#ff2b83;margin-top:2px;text-align:center;white-space:nowrap;">
-                              <?php echo (int)$prize['cost']; ?> kisses
-                            </div>
-                          </span>
-                        <?php endforeach; ?>
-                      </div>
-                      <?php endif; ?>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
+            <!-- Footer-like kisses and prizes section removed per request -->
           </table>
           <?php if (!$email_mode): ?></div><?php endif; ?>
         </td>
@@ -521,26 +415,7 @@
           }, { passive: true });
         });
 
-        // Prize center scaling on scroll
-        const scroller = document.querySelector('.prizeScroller');
-        if (scroller) {
-          const scaleCards = () => {
-            const rect = scroller.getBoundingClientRect();
-            const centerX = rect.left + rect.width/2;
-            const cards = scroller.querySelectorAll('.prizeCard');
-            cards.forEach((c) => {
-              const cr = c.getBoundingClientRect();
-              const cx = cr.left + cr.width/2;
-              const dist = Math.abs(cx - centerX);
-              const t = Math.max(0, 1 - dist / (rect.width/2));
-              const scale = 0.96 + t * 0.08;
-              c.style.transform = 'scale(' + scale.toFixed(3) + ')';
-            });
-          };
-          scroller.addEventListener('scroll', scaleCards, { passive: true });
-          window.addEventListener('resize', scaleCards);
-          setTimeout(scaleCards, 0);
-        }
+        // Prize center scaling removed with prize section
 
         // Emoji confetti on increase
         const JUST_INCREASED = <?php echo $just_increased ? 'true' : 'false'; ?>;
