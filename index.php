@@ -11,7 +11,7 @@
   $streakDays = 3; // example
 
   // Second metric: kisses (hardcoded, manually incremented when hitting kiss milestones)
-  $kisses = 1; // example
+  $kisses = 10; // example
   $kissPrizes = [
     [ 'name' => 'purse',  'cost' => 150, 'emoji' => '👜' ],
     [ 'name' => 'mejuri', 'cost' => 150, 'emoji' => '💍' ],
@@ -28,6 +28,7 @@
   $minPoint = $score;
   $maxPoint = $score + 20;
   $prevPoint = max(0, $score - 1);
+  $horizonPercent = (int)round(($score / max(1, $maxPoint)) * 100);
 
   // Generic repeating milestones: define label and repeats_every
   // kind: 'icon' renders in the dot column as an emoji; 'pill' stacks as a label
@@ -43,6 +44,7 @@
   // You can add multiple per point: 21 => ['cute scrunchies', 'pink water bottle']
   $customMilestones = [
     13 => ['Kitchen spoon rest'],
+    25 => ['running shoes'],
   ];
 ?>
 <!doctype html>
@@ -139,9 +141,25 @@
             <?php endif; ?>
             <tr>
               <td style="padding:8px 12px 18px 12px;">
+                <!-- Prominent current score & progress bar -->
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:8px;">
+                  <tr>
+                    <td align="left" style="padding:0 4px 8px 4px;">
+                      <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:14px;line-height:18px;color:#ff2b83;font-weight:bold;<?php if (!$email_mode) { echo 'animation:popIn 500ms ease-out both;'; } ?>">
+                        Current score: <span style="color:#ff2b83;">&<?php echo (int)$score; ?></span> pts
+                      </div>
+                      <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:16px;color:#b34a7f;">
+                        You’ve come so far. Keep going!
+                      </div>
+                      <div style="height:10px;background:#ffe3f0;border:1px solid #ffb6d0;border-radius:999px;margin-top:6px;overflow:hidden;">
+                        <div style="height:100%;width:<?php echo max(0,min(100,$horizonPercent)); ?>%;background:#ff86b8;border-right:1px solid #ff2b83;<?php if (!$email_mode) { echo 'animation:popIn 500ms ease-out both;'; } ?>"></div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
                 <!-- Progress list table: three columns (value | line+dot | labels) -->
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;border-spacing:0;">
-                  <?php for ($p = $maxPoint; $p >= $minPoint; $p--) :
+                  <?php for ($p = $minPoint; $p <= $maxPoint; $p++) :
                     $isCurrent = ($p === $score);
 
                     // Determine icon and labels for this point using generic definitions
