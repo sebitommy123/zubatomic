@@ -27,8 +27,8 @@
   // kind: 'icon' renders in the dot column as an emoji; 'pill' stacks as a label
   $repeatingMilestones = [
     [ 'label' => 'kiss', 'repeats_every' => 4,  'kind' => 'icon', 'icon' => '💋' ],
-    [ 'label' => 'store', 'repeats_every' => 10, 'kind' => 'pill' ],
-    [ 'label' => 'experience', 'repeats_every' => 17, 'kind' => 'pill' ],
+    [ 'label' => 'Store of your choice', 'repeats_every' => 10, 'kind' => 'pill' ],
+    [ 'label' => 'Experience (e.g. nail salon)', 'repeats_every' => 17, 'kind' => 'pill' ],
   ];
 
   // Custom, one-off milestones mapping (won't repeat)
