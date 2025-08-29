@@ -6,9 +6,20 @@
   // Email-friendly mode: disables animations and adds legacy attrs like bgcolor
   $email_mode = false;
 
+  // Second metric: kisses (hardcoded, manually incremented when hitting kiss milestones)
+  $kisses = 3; // example
+  $kissPrizes = [
+    [ 'name' => 'Hoodie', 'cost' => 20, 'img' => 'https://via.placeholder.com/64?text=H' ],
+    [ 'name' => 'T-Shirt', 'cost' => 12, 'img' => 'https://via.placeholder.com/64?text=T' ],
+    [ 'name' => 'Dinner', 'cost' => 50, 'img' => 'https://via.placeholder.com/64?text=D' ],
+    [ 'name' => 'Flowers', 'cost' => 8,  'img' => 'https://via.placeholder.com/64?text=F' ],
+  ];
+
   // Ensure non-negative, since points start at 0
   if (!is_int($score)) { $score = (int)$score; }
   if ($score < 0) { $score = 0; }
+  if (!is_int($kisses)) { $kisses = (int)$kisses; }
+  if ($kisses < 0) { $kisses = 0; }
 
   $minPoint = $score;
   $maxPoint = $score + 20;
@@ -141,10 +152,66 @@
               </td>
             </tr>
             <tr>
-              <td align="center" style="padding:0 20px 20px 20px;">
+              <td align="center" style="padding:0 20px 12px 20px;">
                 <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:16px;color:#b34a7f;">
                   Reaching for the stars looks good on you ⭐💗
                 </div>
+              </td>
+            </tr>
+            <!-- Footer-like kisses and prizes section -->
+            <tr>
+              <td align="left" style="padding:12px 12px 14px 12px;border-top:1px solid #ffc5dd;background:#fffafc;" bgcolor="#fffafc">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td style="padding:0 0 8px 0;">
+                      <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:16px;color:#b34a7f;">
+                        <span style="color:#ff2b83;font-weight:bold;">Kisses:</span>
+                        <span style="color:#b34a7f;"><?php echo $kisses; ?></span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <?php if ($email_mode): ?>
+                      <!-- Email-friendly horizontal list via table cells -->
+                      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <?php foreach ($kissPrizes as $prize): ?>
+                            <td valign="top" style="padding-right:8px;">
+                              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="background:#ffe3f0;border:1px solid #ffb6d0;border-radius:12px;">
+                                <tr>
+                                  <td align="center" style="padding:8px;">
+                                    <img src="<?php echo htmlspecialchars($prize['img'], ENT_QUOTES, 'UTF-8'); ?>" width="56" height="56" alt="<?php echo htmlspecialchars(isset($prize['name']) ? $prize['name'] : 'prize', ENT_QUOTES, 'UTF-8'); ?>" style="display:block;border:0;outline:none;text-decoration:none;border-radius:8px;background:#ffffff;" />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td align="center" style="padding:0 8px 8px 8px;">
+                                    <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#ff2b83;white-space:nowrap;">
+                                      <?php echo (int)$prize['cost']; ?> kisses
+                                    </div>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          <?php endforeach; ?>
+                        </tr>
+                      </table>
+                      <?php else: ?>
+                      <!-- Web preview: allow horizontal scroll if needed -->
+                      <div style="white-space:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;">
+                        <?php foreach ($kissPrizes as $prize): ?>
+                          <span style="display:inline-block;vertical-align:top;margin-right:8px;background:#ffe3f0;border:1px solid #ffb6d0;border-radius:12px;padding:8px;">
+                            <img src="<?php echo htmlspecialchars($prize['img'], ENT_QUOTES, 'UTF-8'); ?>" width="56" height="56" alt="<?php echo htmlspecialchars(isset($prize['name']) ? $prize['name'] : 'prize', ENT_QUOTES, 'UTF-8'); ?>" style="display:block;border:0;outline:none;text-decoration:none;border-radius:8px;background:#ffffff;" />
+                            <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#ff2b83;margin-top:6px;text-align:center;white-space:nowrap;">
+                              <?php echo (int)$prize['cost']; ?> kisses
+                            </div>
+                          </span>
+                        <?php endforeach; ?>
+                      </div>
+                      <?php endif; ?>
+                    </td>
+                  </tr>
+                </table>
               </td>
             </tr>
           </table>
