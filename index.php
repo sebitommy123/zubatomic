@@ -47,6 +47,53 @@
     25 => ['running shoes'],
   ];
 ?>
+<?php
+  // Compute next upcoming milestone and next prize info
+  $nextPointWithLabel = null;
+  $nextLabelText = null;
+  $nextIconAtNext = null;
+  for ($np = $score + 1; $np <= $score + 100; $np++) {
+    $tmpIcon = null;
+    $tmpLabels = [];
+    foreach ($repeatingMilestones as $rm) {
+      $every = isset($rm['repeats_every']) ? (int)$rm['repeats_every'] : 0;
+      $kind  = isset($rm['kind']) ? $rm['kind'] : 'pill';
+      if ($every > 0 && $np > 0 && $np % $every === 0) {
+        if ($kind === 'icon' && $tmpIcon === null) {
+          $tmpIcon = isset($rm['icon']) ? $rm['icon'] : '✨';
+        } else {
+          $tmpLabels[] = isset($rm['label']) ? $rm['label'] : 'milestone';
+        }
+      }
+    }
+    if (isset($customMilestones[$np]) && is_array($customMilestones[$np])) {
+      $tmpLabels = array_merge($tmpLabels, $customMilestones[$np]);
+    }
+    if (count($tmpLabels) > 0 || $tmpIcon !== null) {
+      $nextPointWithLabel = $np;
+      $nextLabelText = count($tmpLabels) > 0 ? $tmpLabels[0] : null;
+      $nextIconAtNext = $tmpIcon;
+      break;
+    }
+  }
+  $pointsToNext = ($nextPointWithLabel !== null) ? max(0, $nextPointWithLabel - $score) : null;
+
+  // Determine next prize from kisses
+  $nextPrize = null;
+  foreach ($kissPrizes as $kp) {
+    if (!isset($kp['cost'])) { continue; }
+    if ((int)$kp['cost'] > (int)$kisses) {
+      if ($nextPrize === null || (int)$kp['cost'] < (int)$nextPrize['cost']) {
+        $nextPrize = $kp;
+      }
+    }
+  }
+  $nextPrizeName = $nextPrize ? (isset($nextPrize['name']) ? $nextPrize['name'] : 'prize') : null;
+  $nextPrizeEmoji = $nextPrize ? (isset($nextPrize['emoji']) ? $nextPrize['emoji'] : '🎁') : null;
+  $nextPrizeCost = $nextPrize ? (int)$nextPrize['cost'] : null;
+  $kissesToNextPrize = ($nextPrizeCost !== null) ? max(0, $nextPrizeCost - (int)$kisses) : null;
+  $kissProgressPercent = ($nextPrizeCost !== null && $nextPrizeCost > 0) ? (int)round((($kisses) / $nextPrizeCost) * 100) : null;
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -65,26 +112,38 @@
       @keyframes floatUp { 0% { transform: translateY(8px); opacity: 0.0; } 50% { transform: translateY(-2px); opacity: 1; } 100% { transform: translateY(-10px); opacity: 0; } }
 
       /* Extra web-only visuals */
-      :root { --pink:#ff2b83; --pink-200:#ff86b8; --pink-100:#ffc5dd; --rose-50:#fff3f9; }
+      :root { --pink:#ff2b83; --pink-200:#ff86b8; --pink-100:#ffc5dd; --rose-50:#fff3f9; --lavender:#c8a2ff; --peach:#ffb48a; --mint:#a6f0d3; --gold:#ffd56b; }
       @keyframes shimmerX { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+      @keyframes shimmerY { 0% { background-position: 50% 0%; } 100% { background-position: 50% 200%; } }
       @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
       @keyframes drift { 0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(-120vh) translateX(var(--driftX, 0)) rotate(360deg); opacity: 0; } }
-      .bg-gradient { position:fixed; inset:0; z-index:0; background: radial-gradient(1200px 800px at 10% 110%, rgba(255, 197, 221, 0.55), transparent 50%), radial-gradient(1000px 700px at 90% -10%, rgba(255, 134, 184, 0.45), transparent 40%), linear-gradient(135deg, #ffe6f2, #ffecf7 40%, #ffe3f0 70%); filter: saturate(105%); animation: shimmerX 12s linear infinite; background-size: 200% 200%; }
+      .bg-gradient { position:fixed; inset:0; z-index:0; background: radial-gradient(1200px 800px at 10% 110%, rgba(255, 197, 221, 0.55), transparent 50%), radial-gradient(1000px 700px at 90% -10%, rgba(200, 162, 255, 0.30), transparent 40%), linear-gradient(135deg, #ffe6f2, #ffecf7 40%, #ffe3f0 70%); filter: saturate(108%); animation: shimmerX 12s linear infinite; background-size: 200% 200%; }
       .titleShimmer { background: linear-gradient(90deg, #ff2b83, #ff86b8, #ff2b83); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmerX 5s ease-in-out infinite; text-shadow: 0 2px 18px rgba(255, 43, 131, 0.25); }
       #cardWrap { display:inline-block; will-change: transform, filter; transform-style: preserve-3d; transition: transform 300ms ease, filter 300ms ease; filter: drop-shadow(0 14px 28px rgba(255, 43, 131, 0.24)) drop-shadow(0 4px 10px rgba(0,0,0,0.08)); }
       #cardWrap:hover { filter: drop-shadow(0 18px 36px rgba(255, 43, 131, 0.30)) drop-shadow(0 6px 14px rgba(0,0,0,0.10)); }
+      #cardWrap.ambientPulse { animation: ambientGlow 6s ease-in-out infinite; }
+      @keyframes ambientGlow { 0%, 100% { filter: drop-shadow(0 14px 28px rgba(255, 43, 131, 0.24)) drop-shadow(0 4px 10px rgba(0,0,0,0.08)); } 50% { filter: drop-shadow(0 18px 36px rgba(255, 43, 131, 0.34)) drop-shadow(0 8px 14px rgba(0,0,0,0.12)); } }
       #floaters { position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
       .floater { position:absolute; bottom:-40px; font-size:20px; will-change: transform, opacity; animation: drift var(--dur, 8s) linear forwards; filter: drop-shadow(0 2px 8px rgba(255, 43, 131, 0.25)); }
       #cursor-trail { position:fixed; inset:0; pointer-events:none; z-index:3; }
       .trail-heart { position:absolute; font-size:12px; transform: translate(-50%, -50%); animation: floatUp 1400ms ease-out forwards; filter: drop-shadow(0 2px 6px rgba(255, 43, 131, 0.35)); }
-      .ticker { position:relative; overflow:hidden; border-radius:12px; border:1px solid var(--pink-100); background:#fffafc; }
+      .ticker { position:relative; overflow:hidden; border-radius:12px; border:1px solid var(--pink-100); background:linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,246,250,0.95)); box-shadow: 0 8px 18px rgba(255, 43, 131, 0.08) inset; }
       .tickerTrack { display:inline-block; white-space:nowrap; padding:8px 0; animation: marquee 24s linear infinite; }
       .tickerItem { display:inline-block; margin:0 14px; font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size:12px; line-height:16px; color:#b34a7f; }
       @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
       .prizeScroller { white-space:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; scroll-snap-type:x mandatory; padding-bottom:2px; }
-      .prizeCard { display:inline-block; vertical-align:top; margin-right:8px; background:#ffe3f0; border:1px solid #ffb6d0; border-radius:12px; padding:8px; scroll-snap-align:center; transition: transform 300ms ease, box-shadow 300ms ease; animation: bob 4s ease-in-out infinite; box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 8px 16px rgba(255, 43, 131, 0.10); }
-      .prizeCard:hover { transform: translateY(-6px) rotate(-2deg) scale(1.03); box-shadow: 0 1px 0 rgba(255,255,255,0.7) inset, 0 14px 28px rgba(255,43,131,0.18); }
+      .prizeCard { display:inline-block; vertical-align:top; margin-right:8px; background:#ffe3f0; border:1px solid #ffb6d0; border-radius:12px; padding:8px; scroll-snap-align:center; transition: transform 300ms ease, box-shadow 300ms ease; animation: bob 4s ease-in-out infinite; box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 8px 16px rgba(255, 43, 131, 0.10); will-change: transform; }
+      .prizeCard:hover { transform: translateY(-6px) rotate(-2deg) scale(1.05); box-shadow: 0 1px 0 rgba(255,255,255,0.7) inset, 0 14px 28px rgba(255,43,131,0.18); }
       .prizeImg { display:block; border-radius:8px; background:#ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+      .ringWrap { position:relative; width:64px; height:64px; border-radius:999px; background: conic-gradient(from 270deg, var(--gold) <?php echo $horizonPercent; ?>%, #ffe3f0 <?php echo $horizonPercent; ?>%); display:flex; align-items:center; justify-content:center; box-shadow: 0 4px 16px rgba(0,0,0,0.06), 0 0 0 4px rgba(255,255,255,0.8) inset; }
+      .ringInner { width:48px; height:48px; border-radius:999px; background: radial-gradient(120% 120% at 30% 20%, #ffffff, #fff6fb); display:flex; align-items:center; justify-content:center; font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif; color:#ff2b83; font-weight:bold; font-size:14px; }
+      .miniBar { position:relative; height:8px; border-radius:999px; background:linear-gradient(90deg, #ffe3f0, #ffecf7); overflow:hidden; border:1px solid #ffb6d0; }
+      .miniBarFill { height:100%; border-radius:999px; background:linear-gradient(90deg, var(--mint), var(--peach), var(--pink)); box-shadow:0 0 6px rgba(255, 43, 131, 0.3); }
+      .nextBubble { display:inline-block; background:#fff7fb; border:1px solid #ffb6d0; border-radius:14px; padding:6px 10px; color:#ff2b83; font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size:12px; line-height:14px; box-shadow: 0 1px 0 rgba(255,255,255,0.7) inset; }
+      .js-ripple { position:relative; overflow:hidden; }
+      .js-ripple::after { content:""; position:absolute; left:50%; top:50%; width:6px; height:6px; border-radius:999px; background:rgba(255, 43, 131, 0.25); transform: translate(-50%,-50%) scale(1); opacity:0; }
+      .js-ripple.is-rippling::after { animation: ripple 500ms ease-out; }
+      @keyframes ripple { 0% { opacity:0.5; transform: translate(-50%,-50%) scale(1); } 100% { opacity:0; transform: translate(-50%,-50%) scale(18); } }
     </style>
     <div class="bg-gradient"></div>
     <div id="floaters"></div>
@@ -95,7 +154,7 @@
       <tr>
         <td align="center" style="padding:20px 12px;">
           <!-- Card container -->
-          <?php if (!$email_mode): ?><div id="cardWrap"><?php endif; ?>
+          <?php if (!$email_mode): ?><div id="cardWrap" class="ambientPulse"><?php endif; ?>
           <table role="presentation" width="360" cellpadding="0" cellspacing="0" border="0" style="width:360px;max-width:94%;background:#ffffff;border-radius:16px;border:2px solid #ffc5dd;" bgcolor="#ffffff">
             <tr>
               <td align="center" style="padding:14px 20px 0 20px;">
@@ -130,21 +189,58 @@
                 </div>
               </td>
             </tr>
+            <?php if (!$email_mode): ?>
+            <tr>
+              <td style="padding:0 12px 8px 12px;">
+                <div class="ticker" style="">
+                  <div id="tickerTrack" class="tickerTrack"></div>
+                </div>
+              </td>
+            </tr>
+            <?php endif; ?>
             <tr>
               <td style="padding:8px 12px 18px 12px;">
                 <!-- Prominent current score & progress bar -->
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:8px;">
                   <tr>
-                    <td align="left" style="padding:0 4px 8px 4px;">
+                    <td align="left" valign="middle" style="padding:0 4px 8px 4px;">
                       <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:14px;line-height:18px;color:#ff2b83;font-weight:bold;<?php if (!$email_mode) { echo 'animation:popIn 500ms ease-out both;'; } ?>">
                         Current score: <span style="color:#ff2b83;"><?php echo (int)$score; ?></span> pts
                       </div>
                       <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:16px;color:#b34a7f;">
                         You’ve come so far. Keep going!
                       </div>
+                      <div class="miniBar" style="margin-top:6px;<?php if ($email_mode) { echo 'background:#ffe3f0;border:1px solid #ffb6d0;height:8px;border-radius:999px;'; } ?>">
+                        <div class="miniBarFill" style="width:<?php echo $horizonPercent; ?>%;<?php if ($email_mode) { echo 'background:#ff86b8;height:8px;border-radius:999px;'; } ?>"></div>
+                      </div>
                     </td>
+                    <?php if (!$email_mode): ?>
+                    <td align="right" valign="middle" style="padding:0 4px 8px 4px;">
+                      <div class="ringWrap"><div class="ringInner"><?php echo (int)$score; ?></div></div>
+                    </td>
+                    <?php else: ?>
+                    <td align="right" valign="middle" style="padding:0 4px 8px 4px;">
+                      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;border-spacing:0;">
+                        <tr>
+                          <td align="center" style="width:48px;height:48px;border-radius:999px;background:#fff3f9;border:1px solid #ffb6d0;color:#ff2b83;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:14px;font-weight:bold;">
+                            <?php echo (int)$score; ?>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <?php endif; ?>
                   </tr>
                 </table>
+                <?php if ($nextPointWithLabel !== null): ?>
+                <div style="margin:4px 4px 10px 4px;">
+                  <span class="nextBubble js-ripple" style="<?php if ($email_mode) { echo 'background:#fff7fb;border:1px solid #ffb6d0;border-radius:14px;padding:6px 10px;color:#ff2b83;'; } ?>">
+                    <?php if ($nextIconAtNext): ?><span style="margin-right:6px;">&<?php echo htmlspecialchars($nextIconAtNext, ENT_QUOTES, 'UTF-8'); ?></span><?php endif; ?>
+                    Next at <strong style="color:#ff2b83;">&<?php echo (int)$nextPointWithLabel; ?></strong>:
+                    <span style="color:#b34a7f;">&<?php echo htmlspecialchars($nextLabelText ? $nextLabelText : 'sweet surprise', ENT_QUOTES, 'UTF-8'); ?></span>
+                    <?php if ($pointsToNext !== null): ?><span style="color:#cc6a9a;margin-left:6px;">(&<?php echo (int)$pointsToNext; ?> to go)</span><?php endif; ?>
+                  </span>
+                </div>
+                <?php endif; ?>
                 <!-- Progress list table: three columns (value | line+dot | labels) -->
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;border-spacing:0;">
                   <?php for ($p = $minPoint; $p <= $maxPoint; $p++) :
@@ -182,7 +278,7 @@
                     </td>
 
                     <!-- Line + dot/emoji column (continuous pink line as background) -->
-                    <td width="24" valign="middle" align="center" style="width:24px;background:#ffd9ea;" bgcolor="#ffd9ea">
+                    <td width="24" valign="middle" align="center" style="width:24px;background:#ffd9ea;<?php if (!$email_mode) { echo 'background-image: linear-gradient(180deg, rgba(255,255,255,0.25), rgba(255,255,255,0) 50%, rgba(255,255,255,0.25)); background-size: 100% 28px; animation: shimmerY 10s linear infinite;'; } ?>" bgcolor="#ffd9ea">
                       <?php if ($iconAtPoint): ?>
                         <span style="display:inline-block;font-size:16px;line-height:16px;margin:6px 0;<?php if (!$email_mode) { echo 'animation:bounceSoft 2s ease-in-out infinite;'; } ?>"><?php echo htmlspecialchars($iconAtPoint, ENT_QUOTES, 'UTF-8'); ?></span>
                       <?php else: ?>
@@ -196,7 +292,7 @@
                     <!-- Labels column (stacked pills) -->
                     <td valign="middle" style="padding:8px 8px 8px 8px;background:<?php echo $rowBg; ?>;" bgcolor="<?php echo $rowBg; ?>">
                       <?php if ($isCurrent): ?>
-                        <span style="display:inline-block;background:#ffe3f0;border:1px solid #ffb6d0;color:#ff2b83;border-radius:999px;padding:4px 10px;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;margin-right:0;margin-bottom:6px;<?php if (!$email_mode) { echo 'animation:popIn 500ms ease-out both;'; } ?>">You are here ✨</span>
+                        <span class="js-ripple" style="display:inline-block;background:#ffe3f0;border:1px solid #ffb6d0;color:#ff2b83;border-radius:999px;padding:4px 10px;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;margin-right:0;margin-bottom:6px;<?php if (!$email_mode) { echo 'animation:popIn 500ms ease-out both;'; } ?>">You are here ✨</span>
                       <?php endif; ?>
 
                       <?php if ($hasLabels): ?>
@@ -204,7 +300,7 @@
                           <?php foreach ($labels as $label): ?>
                             <tr>
                               <td style="padding:0 0 6px 0;">
-                                <span style="display:block;background:#ffe3f0;border:1px solid #ffb6d0;color:#ff2b83;border-radius:12px;padding:6px 10px;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;word-break:break-word;<?php if (!$email_mode) { echo 'animation:twinkle 3s ease-in-out infinite;box-shadow:0 1px 0 rgba(255,255,255,0.7) inset;'; } ?>"><?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?></span>
+                                <span class="js-ripple" style="display:block;background:#ffe3f0;border:1px solid #ffb6d0;color:#ff2b83;border-radius:12px;padding:6px 10px;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;word-break:break-word;<?php if (!$email_mode) { echo 'animation:twinkle 3s ease-in-out infinite;box-shadow:0 1px 0 rgba(255,255,255,0.7) inset;'; } ?>"><?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?></span>
                               </td>
                             </tr>
                           <?php endforeach; ?>
@@ -237,6 +333,29 @@
                         <span style="color:#ff2b83;font-weight:bold;">Kisses:</span>
                         <span style="color:#b34a7f;"><?php echo $kisses; ?></span>
                       </div>
+                      <?php if ($nextPrizeName !== null): ?>
+                      <div style="margin-top:6px;">
+                        <?php if ($email_mode): ?>
+                        <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#b34a7f;">
+                          Next prize: <span style="color:#ff2b83; font-weight:bold;"><?php echo htmlspecialchars($nextPrizeName, ENT_QUOTES, 'UTF-8'); ?></span>
+                          (<?php echo (int)$kissesToNextPrize; ?> kisses away)
+                        </div>
+                        <?php else: ?>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                          <span role="img" aria-label="next prize" title="next prize" style="font-size:16px;"><?php echo htmlspecialchars($nextPrizeEmoji, ENT_QUOTES, 'UTF-8'); ?></span>
+                          <div style="flex:1;">
+                            <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#b34a7f;">
+                              Next prize: <span style="color:#ff2b83; font-weight:bold;"><?php echo htmlspecialchars($nextPrizeName, ENT_QUOTES, 'UTF-8'); ?></span>
+                              <span style="color:#cc6a9a;">(<?php echo (int)$kissesToNextPrize; ?> away)</span>
+                            </div>
+                            <div class="miniBar" style="margin-top:4px;height:6px;">
+                              <div class="miniBarFill" style="width:<?php echo (int)$kissProgressPercent; ?>%; height:6px;"></div>
+                            </div>
+                          </div>
+                        </div>
+                        <?php endif; ?>
+                      </div>
+                      <?php endif; ?>
                     </td>
                   </tr>
                   <tr>
@@ -283,7 +402,7 @@
                       <!-- Web preview: allow horizontal scroll if needed -->
                       <div class="prizeScroller" style="white-space:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;">
                         <?php foreach ($kissPrizes as $prize): ?>
-                          <span class="prizeCard" style="display:inline-block;vertical-align:top;margin-right:8px;background:#ffe3f0;border:1px solid #ffb6d0;border-radius:12px;padding:8px;">
+                          <span class="prizeCard js-ripple" style="display:inline-block;vertical-align:top;margin-right:8px;background:#ffe3f0;border:1px solid #ffb6d0;border-radius:12px;padding:8px;">
                             <?php
                               $hasImg = isset($prize['img']) && trim((string)$prize['img']) !== '';
                               $hasEmoji = isset($prize['emoji']) && trim((string)$prize['emoji']) !== '';
@@ -389,6 +508,39 @@
           trail.appendChild(h);
           setTimeout(() => h.remove(), 1500);
         });
+
+        // Ripple + haptics
+        const rippleTargets = Array.prototype.slice.call(document.querySelectorAll('.js-ripple'));
+        rippleTargets.forEach((el) => {
+          el.addEventListener('click', (e) => {
+            try { if (navigator.vibrate) navigator.vibrate(8); } catch (err) {}
+            el.classList.remove('is-rippling');
+            void el.offsetWidth; // restart animation
+            el.classList.add('is-rippling');
+            setTimeout(() => el.classList.remove('is-rippling'), 500);
+          }, { passive: true });
+        });
+
+        // Prize center scaling on scroll
+        const scroller = document.querySelector('.prizeScroller');
+        if (scroller) {
+          const scaleCards = () => {
+            const rect = scroller.getBoundingClientRect();
+            const centerX = rect.left + rect.width/2;
+            const cards = scroller.querySelectorAll('.prizeCard');
+            cards.forEach((c) => {
+              const cr = c.getBoundingClientRect();
+              const cx = cr.left + cr.width/2;
+              const dist = Math.abs(cx - centerX);
+              const t = Math.max(0, 1 - dist / (rect.width/2));
+              const scale = 0.96 + t * 0.08;
+              c.style.transform = 'scale(' + scale.toFixed(3) + ')';
+            });
+          };
+          scroller.addEventListener('scroll', scaleCards, { passive: true });
+          window.addEventListener('resize', scaleCards);
+          setTimeout(scaleCards, 0);
+        }
 
         // Emoji confetti on increase
         const JUST_INCREASED = <?php echo $just_increased ? 'true' : 'false'; ?>;
