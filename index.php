@@ -69,13 +69,23 @@
           <table role="presentation" width="360" cellpadding="0" cellspacing="0" border="0" style="width:360px;max-width:94%;background:#ffffff;border-radius:16px;border:2px solid #ffc5dd;" bgcolor="#ffffff">
             <tr>
               <td align="center" style="padding:14px 20px 0 20px;">
-                <span style="display:inline-block;background:#ffe3f0;border:1px solid #ffb6d0;color:#ff2b83;border-radius:999px;padding:6px 12px;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;<?php if (!$email_mode) { echo 'animation:popIn 500ms ease-out both;'; } ?>">
-                  <span role="img" aria-label="fire" title="fire" style="margin-right:6px;">🔥</span>
-                  Current streak: <strong style="color:#ff2b83;"><?php echo (int)$streakDays; ?></strong> day<?php echo ((int)$streakDays === 1 ? '' : 's'); ?>
-                </span>
-                <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:16px;color:#b34a7f;margin-top:6px;">
-                  Maintain your streak (no beauty point loss) and you’ll earn <?php echo (int)$streakDays; ?> kisses at the end of today.
-                </div>
+                <?php if ((int)$streakDays > 0): ?>
+                  <span style="display:inline-block;background:#ffe3f0;border:1px solid #ffb6d0;color:#ff2b83;border-radius:999px;padding:6px 12px;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;<?php if (!$email_mode) { echo 'animation:popIn 500ms ease-out both;'; } ?>">
+                    <span role="img" aria-label="fire" title="fire" style="margin-right:6px;">🔥</span>
+                    Current streak: <strong style="color:#ff2b83;">&<?php echo (int)$streakDays; ?></strong> day<?php echo ((int)$streakDays === 1 ? '' : 's'); ?>
+                  </span>
+                  <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:16px;color:#b34a7f;margin-top:6px;">
+                    Maintain your streak (no beauty point loss) and you’ll earn <?php echo (int)$streakDays; ?> kisses at the end of today.
+                  </div>
+                <?php else: ?>
+                  <span style="display:inline-block;background:#ffe3f0;border:1px solid #ffb6d0;color:#ff2b83;border-radius:999px;padding:6px 12px;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;<?php if (!$email_mode) { echo 'animation:popIn 500ms ease-out both;'; } ?>">
+                    <span role="img" aria-label="fire" title="fire" style="margin-right:6px;">🔥</span>
+                    No current streak
+                  </span>
+                  <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:16px;color:#b34a7f;margin-top:6px;">
+                    When you have a streak (no beauty point loss), you’ll earn that many kisses at the end of each day. For example, a 3-day streak earns 3 kisses at day’s end.
+                  </div>
+                <?php endif; ?>
               </td>
             </tr>
             <tr>
