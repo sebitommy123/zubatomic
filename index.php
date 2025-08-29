@@ -363,7 +363,56 @@
                 </div>
               </td>
             </tr>
-            <!-- Footer-like kisses and prizes section removed per request -->
+            <tr>
+              <td align="left" style="padding:0 20px 20px 20px;">
+                <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:14px;line-height:18px;color:#ff2b83;font-weight:bold;margin-top:4px;margin-bottom:8px;">
+                  Kiss prizes
+                </div>
+                <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:16px;color:#b34a7f;margin-bottom:8px;">
+                  You have <strong style="color:#ff2b83;"><?php echo (int)$kisses; ?></strong> kisses.
+                  <?php if ($nextPrizeName !== null): ?>
+                    <span class="nextBubble" style="margin-left:6px;"><?php echo htmlspecialchars($nextPrizeEmoji . ' ' . $nextPrizeName, ENT_QUOTES, 'UTF-8'); ?></span>
+                    <span style="margin-left:6px;">— <?php echo (int)$kissesToNextPrize; ?> to go</span>
+                    <?php if ($kissProgressPercent !== null): ?>
+                      <div class="miniBar" style="margin-top:6px;max-width:240px;">
+                        <div class="miniBarFill" style="width: <?php echo max(0, min(100, (int)$kissProgressPercent)); ?>%;"></div>
+                      </div>
+                    <?php endif; ?>
+                  <?php else: ?>
+                    <span class="nextBubble" style="margin-left:6px;">All prizes are affordable 🎉</span>
+                  <?php endif; ?>
+                </div>
+                <div class="prizeScroller" style="padding-top:2px;">
+                  <?php foreach ($kissPrizes as $kp): ?>
+                    <?php
+                      $pName = isset($kp['name']) ? $kp['name'] : 'prize';
+                      $pCost = isset($kp['cost']) ? (int)$kp['cost'] : 0;
+                      $pEmoji = isset($kp['emoji']) ? $kp['emoji'] : '🎁';
+                      $pAffordable = (int)$kisses >= $pCost;
+                      $pPct = $pCost > 0 ? (int)round(((int)$kisses / $pCost) * 100) : 100;
+                      if ($pPct < 0) { $pPct = 0; }
+                      if ($pPct > 100) { $pPct = 100; }
+                      $pRemaining = max(0, $pCost - (int)$kisses);
+                    ?>
+                    <div class="prizeCard" style="min-width:140px;">
+                      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                        <span style="font-size:24px;line-height:1;"><?php echo htmlspecialchars($pEmoji, ENT_QUOTES, 'UTF-8'); ?></span>
+                        <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;line-height:16px;color:#ff2b83;font-weight:bold;"><?php echo htmlspecialchars($pName, ENT_QUOTES, 'UTF-8'); ?></div>
+                      </div>
+                      <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:16px;color:#b34a7f;margin-bottom:6px;">Cost: <?php echo (int)$pCost; ?> kisses</div>
+                      <div class="miniBar" style="max-width:180px;">
+                        <div class="miniBarFill" style="width: <?php echo $pPct; ?>%;"></div>
+                      </div>
+                      <?php if ($pAffordable): ?>
+                        <div class="nextBubble" style="margin-top:6px;background:#ffffff;border-color:#a6f0d3;color:#2b8a3e;">Available now</div>
+                      <?php else: ?>
+                        <div class="nextBubble" style="margin-top:6px;"><?php echo (int)$pRemaining; ?> to go</div>
+                      <?php endif; ?>
+                    </div>
+                  <?php endforeach; ?>
+                </div>
+              </td>
+            </tr>
           </table>
           <?php if (!$email_mode): ?></div><?php endif; ?>
         </td>
