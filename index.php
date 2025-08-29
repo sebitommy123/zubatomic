@@ -42,7 +42,7 @@
   // Example: 13 => ['netflix subscription'].
   // You can add multiple per point: 21 => ['cute scrunchies', 'pink water bottle']
   $customMilestones = [
-    11 => ['Kitchen spoon rest'],
+    13 => ['Kitchen spoon rest'],
   ];
 ?>
 <!doctype html>
@@ -223,6 +223,9 @@
                                 </tr>
                                 <tr>
                                   <td align="center" style="padding:0 8px 8px 8px;">
+                                    <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#b34a7f;white-space:nowrap;margin-bottom:2px;">
+                                      <?php echo $alt; ?>
+                                    </div>
                                     <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#ff2b83;white-space:nowrap;">
                                       <?php echo (int)$prize['cost']; ?> kisses
                                     </div>
@@ -250,7 +253,10 @@
                             <?php else: ?>
                               <span role="img" aria-label="<?php echo $alt; ?>" title="<?php echo $alt; ?>" style="display:block;width:56px;height:56px;line-height:56px;font-size:28px;text-align:center;border-radius:8px;background:#ffffff;">🎁</span>
                             <?php endif; ?>
-                            <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#ff2b83;margin-top:6px;text-align:center;white-space:nowrap;">
+                            <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#b34a7f;margin-top:6px;text-align:center;white-space:nowrap;">
+                              <?php echo $alt; ?>
+                            </div>
+                            <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#ff2b83;margin-top:2px;text-align:center;white-space:nowrap;">
                               <?php echo (int)$prize['cost']; ?> kisses
                             </div>
                           </span>
