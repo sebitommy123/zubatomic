@@ -166,11 +166,11 @@
 
       /* 3) Harden ticker visuals & containment */
       #cardWrap { max-width:100%; }
-      .ticker { width:100%; max-width:100%; overflow:hidden; -webkit-mask-image: linear-gradient(to right, transparent 0, black 14px, black calc(100% - 14px), transparent 100%); mask-image: linear-gradient(to right, transparent 0, black 14px, black calc(100% - 14px), transparent 100%); }
+      .ticker { width:100%; max-width:200px; overflow:hidden; -webkit-mask-image: linear-gradient(to right, transparent 0, black 14px, black calc(100% - 14px), transparent 100%); mask-image: linear-gradient(to right, transparent 0, black 14px, black calc(100% - 14px), transparent 100%); }
       .tickerTrack { contain: layout paint; will-change: transform; }
 
       /* 4) Progress bar safety */
-      .miniBar { width:100%; max-width:100%; }
+      .miniBar { width:100%; max-width:200px; }
 
       /* 5) Mobile tuning for ticker */
       @media (max-width: 480px) {
