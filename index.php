@@ -1,17 +1,27 @@
 <?php
-  // Change these values; the UI will adjust automatically
-  $score = 6; //example
+  // Values now loaded from data.json; the UI will adjust automatically
   $just_increased = false; // set true to show a celebratory score-up animation
 
   // Email-friendly mode: disables animations and adds legacy attrs like bgcolor
   $email_mode = false;
 
-  // Current streak (hardcoded): number of days without any beauty point loss
-  // This is display-only; no logic is implemented here.
-  $streakDays = 3; // example
+  // Load current score, streak, and kisses from JSON
+  $dataFile = __DIR__ . '/data.json';
+  $defaultData = [ 'score' => 0, 'streak' => 0, 'kisses' => 0 ];
+  $data = $defaultData;
+  if (is_readable($dataFile)) {
+    $json = @file_get_contents($dataFile);
+    $parsed = json_decode($json, true);
+    if (is_array($parsed)) {
+      $data = array_merge($defaultData, $parsed);
+    }
+  }
 
-  // Second metric: kisses (hardcoded, manually incremented when hitting kiss milestones)
-  $kisses = 10; // example
+  $score = (int)$data['score'];
+  // Current streak: number of days without any beauty point loss
+  $streakDays = (int)$data['streak'];
+  // Second metric: kisses
+  $kisses = (int)$data['kisses'];
   $kissPrizes = [
     [ 'name' => 'purse',  'cost' => 150, 'emoji' => '👜' ],
     [ 'name' => 'mejuri', 'cost' => 150, 'emoji' => '💍' ],
