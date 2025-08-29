@@ -144,6 +144,30 @@
       .js-ripple::after { content:""; position:absolute; left:50%; top:50%; width:6px; height:6px; border-radius:999px; background:rgba(255, 43, 131, 0.25); transform: translate(-50%,-50%) scale(1); opacity:0; }
       .js-ripple.is-rippling::after { animation: ripple 500ms ease-out; }
       @keyframes ripple { 0% { opacity:0.5; transform: translate(-50%,-50%) scale(1); } 100% { opacity:0; transform: translate(-50%,-50%) scale(18); } }
+
+      /* 1) Global overflow and sizing guards */
+      html, body { width:100%; max-width:100vw; overflow-x:hidden; }
+      *, *::before, *::after { box-sizing: border-box; }
+      body { overflow-wrap:anywhere; word-break:break-word; }
+      img, svg, video, canvas { max-width:100%; height:auto; display:block; }
+
+      /* 2) No-horizontal-scroll wrapper */
+      .noHScroll { position:relative; overflow-x:hidden; max-width:100%; }
+
+      /* 3) Harden ticker visuals & containment */
+      #cardWrap { max-width:100%; }
+      .ticker { width:100%; max-width:100%; overflow:hidden; -webkit-mask-image: linear-gradient(to right, transparent 0, black 14px, black calc(100% - 14px), transparent 100%); mask-image: linear-gradient(to right, transparent 0, black 14px, black calc(100% - 14px), transparent 100%); }
+      .tickerTrack { contain: layout paint; will-change: transform; }
+
+      /* 4) Progress bar safety */
+      .miniBar { width:100%; max-width:100%; }
+
+      /* 5) Mobile tuning for ticker */
+      @media (max-width: 480px) {
+        .tickerItem { margin: 0 10px; }
+        .tickerTrack { animation-duration: 36s; }
+        .ticker { -webkit-mask-image: linear-gradient(to right, transparent 0, black 10px, black calc(100% - 10px), transparent 100%); mask-image: linear-gradient(to right, transparent 0, black 10px, black calc(100% - 10px), transparent 100%); }
+      }
     </style>
     <div class="bg-gradient"></div>
     <div id="floaters"></div>
@@ -192,8 +216,10 @@
             <?php if (!$email_mode): ?>
             <tr>
               <td style="padding:0 12px 8px 12px;">
-                <div class="ticker" style="">
-                  <div id="tickerTrack" class="tickerTrack"></div>
+                <div class="noHScroll">
+                  <div class="ticker">
+                    <div id="tickerTrack" class="tickerTrack"></div>
+                  </div>
                 </div>
               </td>
             </tr>
@@ -201,6 +227,7 @@
             <tr>
               <td style="padding:8px 12px 18px 12px;">
                 <!-- Prominent current score & progress bar -->
+                <div class="noHScroll">
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:8px;">
                   <tr>
                     <td align="left" valign="middle" style="padding:0 4px 8px 4px;">
@@ -231,6 +258,7 @@
                     <?php endif; ?>
                   </tr>
                 </table>
+                </div>
                 <?php if ($nextPointWithLabel !== null): ?>
                 <div style="margin:4px 4px 10px 4px;">
                   <span class="nextBubble js-ripple" style="<?php if ($email_mode) { echo 'background:#fff7fb;border:1px solid #ffb6d0;border-radius:14px;padding:6px 10px;color:#ff2b83;'; } ?>">
@@ -242,6 +270,7 @@
                 </div>
                 <?php endif; ?>
                 <!-- Progress list table: three columns (value | line+dot | labels) -->
+                <div class="noHScroll">
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;border-spacing:0;">
                   <?php for ($p = $minPoint; $p <= $maxPoint; $p++) :
                     $isCurrent = ($p === $score);
@@ -314,6 +343,7 @@
                   </tr>
                   <?php endfor; ?>
                 </table>
+                </div>
               </td>
             </tr>
             <tr>
@@ -357,10 +387,15 @@
         const tickerTrack = document.getElementById('tickerTrack');
         if (tickerTrack) {
           const build = () => {
-            const seq = compliments.concat(compliments).concat(compliments);
+            // 3) Harden ticker: duplicate content just enough to cover width, not excessively
+            const base = compliments.slice();
+            const duplicates = Math.max(2, Math.ceil((window.innerWidth || 320) / 240));
+            let seq = [];
+            for (let i = 0; i < duplicates + 1; i++) { seq = seq.concat(base); }
             tickerTrack.innerHTML = seq.map((t) => '<span class="tickerItem">' + t + '</span>').join('');
           };
           build();
+          window.addEventListener('resize', () => { build(); }, { passive: true });
         }
 
         // Floating emojis
@@ -440,6 +475,25 @@
           const rect = (cardWrap ? cardWrap.getBoundingClientRect() : { left: window.innerWidth/2, top: window.innerHeight/2, width: 0, height: 0 });
           burst(rect.left + rect.width/2, rect.top + 40);
         }
+        // 4) JS overflow guard: clamp any element wider than viewport
+        function clampOverflows(){
+          try {
+            const viewport = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+            const nodes = document.querySelectorAll('body *');
+            nodes.forEach((el) => {
+              const style = window.getComputedStyle(el);
+              if (style.position === 'fixed') return; // fixed may be full-width background
+              const rect = el.getBoundingClientRect();
+              if (rect.width > viewport + 1) {
+                el.style.maxWidth = '100%';
+                el.style.overflowX = 'hidden';
+              }
+            });
+          } catch (e) {}
+        }
+        clampOverflows();
+        window.addEventListener('resize', clampOverflows, { passive: true });
+
       })();
     </script>
     <?php endif; ?>
