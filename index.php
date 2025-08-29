@@ -247,9 +247,11 @@
                       <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:16px;color:#b34a7f;">
                         You’ve come so far. Keep going!
                       </div>
-                      <div class="miniBar" style="margin-top:6px;<?php if ($email_mode) { echo 'background:#ffe3f0;border:1px solid #ffb6d0;height:8px;border-radius:999px;'; } ?>">
-                        <div class="miniBarFill" style="width:<?php echo $horizonPercent; ?>%;<?php if ($email_mode) { echo 'background:#ff86b8;height:8px;border-radius:999px;'; } ?>"></div>
+                      <?php if ($email_mode): ?>
+                      <div class="miniBar" style="margin-top:6px;background:#ffe3f0;border:1px solid #ffb6d0;height:8px;border-radius:999px;">
+                        <div class="miniBarFill" style="width:<?php echo $horizonPercent; ?>%;background:#ff86b8;height:8px;border-radius:999px;"></div>
                       </div>
+                      <?php endif; ?>
                     </td>
                     <?php if (!$email_mode): ?>
                     <td align="right" valign="middle" style="padding:0 4px 8px 4px;">
