@@ -16,6 +16,7 @@
     [ 'name' => 'purse',  'cost' => 15, 'emoji' => '👜' ],
     [ 'name' => 'mejuri', 'cost' => 15, 'emoji' => '💍' ],
     [ 'name' => 'omakase restaurant', 'cost' => 20, 'emoji' => '🍣' ],
+    [ 'name' => 'Save streak', 'cost' => 3, 'emoji' => '🛟' ],
   ];
 
   // Ensure non-negative, since points start at 0
