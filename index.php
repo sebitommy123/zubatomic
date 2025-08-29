@@ -28,7 +28,7 @@
   $repeatingMilestones = [
     [ 'label' => 'kiss', 'repeats_every' => 4,  'kind' => 'icon', 'icon' => '💋' ],
     [ 'label' => 'Store of your choice', 'repeats_every' => 10, 'kind' => 'pill' ],
-    [ 'label' => 'Experience (e.g. nail salon)', 'repeats_every' => 17, 'kind' => 'pill' ],
+    [ 'label' => 'Experience (e.g. nail salon, spa day)', 'repeats_every' => 17, 'kind' => 'pill' ],
   ];
 
   // Custom, one-off milestones mapping (won't repeat)
