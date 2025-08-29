@@ -9,10 +9,8 @@
   // Second metric: kisses (hardcoded, manually incremented when hitting kiss milestones)
   $kisses = 1; // example
   $kissPrizes = [
-    [ 'name' => 'Hoodie', 'cost' => 20, 'img' => 'https://via.placeholder.com/64?text=H' ],
-    [ 'name' => 'T-Shirt', 'cost' => 12, 'img' => 'https://via.placeholder.com/64?text=T' ],
-    [ 'name' => 'Dinner', 'cost' => 50, 'img' => 'https://via.placeholder.com/64?text=D' ],
-    [ 'name' => 'Flowers', 'cost' => 8,  'img' => 'https://via.placeholder.com/64?text=F' ],
+    [ 'name' => 'purse',  'cost' => 15, 'emoji' => '👜' ],
+    [ 'name' => 'mejuri', 'cost' => 15, 'emoji' => '💍' ],
   ];
 
   // Ensure non-negative, since points start at 0
@@ -29,7 +27,7 @@
   // kind: 'icon' renders in the dot column as an emoji; 'pill' stacks as a label
   $repeatingMilestones = [
     [ 'label' => 'kiss', 'repeats_every' => 4,  'kind' => 'icon', 'icon' => '💋' ],
-    [ 'label' => 'trip', 'repeats_every' => 10, 'kind' => 'pill' ],
+    [ 'label' => 'store', 'repeats_every' => 10, 'kind' => 'pill' ],
     [ 'label' => 'experience', 'repeats_every' => 17, 'kind' => 'pill' ],
   ];
 
@@ -181,7 +179,18 @@
                               <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="background:#ffe3f0;border:1px solid #ffb6d0;border-radius:12px;">
                                 <tr>
                                   <td align="center" style="padding:8px;">
-                                    <img src="<?php echo htmlspecialchars($prize['img'], ENT_QUOTES, 'UTF-8'); ?>" width="56" height="56" alt="<?php echo htmlspecialchars(isset($prize['name']) ? $prize['name'] : 'prize', ENT_QUOTES, 'UTF-8'); ?>" style="display:block;border:0;outline:none;text-decoration:none;border-radius:8px;background:#ffffff;" />
+                                    <?php
+                                      $hasImg = isset($prize['img']) && trim((string)$prize['img']) !== '';
+                                      $hasEmoji = isset($prize['emoji']) && trim((string)$prize['emoji']) !== '';
+                                      $alt = htmlspecialchars(isset($prize['name']) ? $prize['name'] : 'prize', ENT_QUOTES, 'UTF-8');
+                                    ?>
+                                    <?php if ($hasImg): ?>
+                                      <img src="<?php echo htmlspecialchars($prize['img'], ENT_QUOTES, 'UTF-8'); ?>" width="56" height="56" alt="<?php echo $alt; ?>" style="display:block;border:0;outline:none;text-decoration:none;border-radius:8px;background:#ffffff;" />
+                                    <?php elseif ($hasEmoji): ?>
+                                      <span role="img" aria-label="<?php echo $alt; ?>" title="<?php echo $alt; ?>" style="display:block;width:56px;height:56px;line-height:56px;font-size:32px;text-align:center;border-radius:8px;background:#ffffff;"><?php echo htmlspecialchars($prize['emoji'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                    <?php else: ?>
+                                      <span role="img" aria-label="<?php echo $alt; ?>" title="<?php echo $alt; ?>" style="display:block;width:56px;height:56px;line-height:56px;font-size:28px;text-align:center;border-radius:8px;background:#ffffff;">🎁</span>
+                                    <?php endif; ?>
                                   </td>
                                 </tr>
                                 <tr>
@@ -201,7 +210,18 @@
                       <div style="white-space:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;">
                         <?php foreach ($kissPrizes as $prize): ?>
                           <span style="display:inline-block;vertical-align:top;margin-right:8px;background:#ffe3f0;border:1px solid #ffb6d0;border-radius:12px;padding:8px;">
-                            <img src="<?php echo htmlspecialchars($prize['img'], ENT_QUOTES, 'UTF-8'); ?>" width="56" height="56" alt="<?php echo htmlspecialchars(isset($prize['name']) ? $prize['name'] : 'prize', ENT_QUOTES, 'UTF-8'); ?>" style="display:block;border:0;outline:none;text-decoration:none;border-radius:8px;background:#ffffff;" />
+                            <?php
+                              $hasImg = isset($prize['img']) && trim((string)$prize['img']) !== '';
+                              $hasEmoji = isset($prize['emoji']) && trim((string)$prize['emoji']) !== '';
+                              $alt = htmlspecialchars(isset($prize['name']) ? $prize['name'] : 'prize', ENT_QUOTES, 'UTF-8');
+                            ?>
+                            <?php if ($hasImg): ?>
+                              <img src="<?php echo htmlspecialchars($prize['img'], ENT_QUOTES, 'UTF-8'); ?>" width="56" height="56" alt="<?php echo $alt; ?>" style="display:block;border:0;outline:none;text-decoration:none;border-radius:8px;background:#ffffff;" />
+                            <?php elseif ($hasEmoji): ?>
+                              <span role="img" aria-label="<?php echo $alt; ?>" title="<?php echo $alt; ?>" style="display:block;width:56px;height:56px;line-height:56px;font-size:32px;text-align:center;border-radius:8px;background:#ffffff;"><?php echo htmlspecialchars($prize['emoji'], ENT_QUOTES, 'UTF-8'); ?></span>
+                            <?php else: ?>
+                              <span role="img" aria-label="<?php echo $alt; ?>" title="<?php echo $alt; ?>" style="display:block;width:56px;height:56px;line-height:56px;font-size:28px;text-align:center;border-radius:8px;background:#ffffff;">🎁</span>
+                            <?php endif; ?>
                             <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;color:#ff2b83;margin-top:6px;text-align:center;white-space:nowrap;">
                               <?php echo (int)$prize['cost']; ?> kisses
                             </div>
