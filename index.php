@@ -28,7 +28,7 @@
   // kind: 'icon' renders in the dot column as an emoji; 'pill' stacks as a label
   $repeatingMilestones = [
     [ 'label' => 'kiss', 'repeats_every' => 4,  'kind' => 'icon', 'icon' => '💋' ],
-    [ 'label' => 'Store of your choice', 'repeats_every' => 10, 'kind' => 'pill' ],
+    [ 'label' => 'Store (e.g. Clothes, sephora)', 'repeats_every' => 10, 'kind' => 'pill' ],
     [ 'label' => 'Experience (e.g. nail salon, spa day, hair day)', 'repeats_every' => 17, 'kind' => 'pill' ],
   ];
 
