@@ -13,10 +13,10 @@
   // Second metric: kisses (hardcoded, manually incremented when hitting kiss milestones)
   $kisses = 1; // example
   $kissPrizes = [
-    [ 'name' => 'purse',  'cost' => 15, 'emoji' => '👜' ],
-    [ 'name' => 'mejuri', 'cost' => 15, 'emoji' => '💍' ],
-    [ 'name' => 'omakase restaurant', 'cost' => 20, 'emoji' => '🍣' ],
-    [ 'name' => 'Save streak', 'cost' => 3, 'emoji' => '🛟' ],
+    [ 'name' => 'purse',  'cost' => 150, 'emoji' => '👜' ],
+    [ 'name' => 'mejuri', 'cost' => 150, 'emoji' => '💍' ],
+    [ 'name' => 'omakase restaurant', 'cost' => 200, 'emoji' => '🍣' ],
+    [ 'name' => 'Save streak', 'cost' => 30, 'emoji' => '🛟' ],
   ];
 
   // Ensure non-negative, since points start at 0
@@ -32,6 +32,7 @@
   // Generic repeating milestones: define label and repeats_every
   // kind: 'icon' renders in the dot column as an emoji; 'pill' stacks as a label
   $repeatingMilestones = [
+    [ 'label' => '+10 kisses', 'repeats_every' => 4,  'kind' => 'pill' ],
     [ 'label' => 'kiss', 'repeats_every' => 4,  'kind' => 'icon', 'icon' => '💋' ],
     [ 'label' => 'Store (e.g. Clothes, sephora)', 'repeats_every' => 10, 'kind' => 'pill' ],
     [ 'label' => 'Experience (e.g. nail salon, spa day, hair day)', 'repeats_every' => 17, 'kind' => 'pill' ],
