@@ -36,7 +36,7 @@
   // Example: 13 => ['netflix subscription'].
   // You can add multiple per point: 21 => ['cute scrunchies', 'pink water bottle']
   $customMilestones = [
-    13 => ['netflix subscription'],
+    11 => ['Kitchen spoon rest'],
   ];
 ?>
 <!doctype html>
