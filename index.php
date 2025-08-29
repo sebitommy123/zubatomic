@@ -130,15 +130,6 @@
                 </div>
               </td>
             </tr>
-            <?php if (!$email_mode): ?>
-            <tr>
-              <td style="padding:0 16px 8px 16px;">
-                <div class="ticker" style="border:1px solid #ffc5dd;">
-                  <div class="tickerTrack" id="tickerTrack"></div>
-                </div>
-              </td>
-            </tr>
-            <?php endif; ?>
             <tr>
               <td style="padding:8px 12px 18px 12px;">
                 <!-- Prominent current score & progress bar -->
@@ -146,13 +137,10 @@
                   <tr>
                     <td align="left" style="padding:0 4px 8px 4px;">
                       <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:14px;line-height:18px;color:#ff2b83;font-weight:bold;<?php if (!$email_mode) { echo 'animation:popIn 500ms ease-out both;'; } ?>">
-                        Current score: <span style="color:#ff2b83;">&<?php echo (int)$score; ?></span> pts
+                        Current score: <span style="color:#ff2b83;"><?php echo (int)$score; ?></span> pts
                       </div>
                       <div style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:16px;color:#b34a7f;">
                         You’ve come so far. Keep going!
-                      </div>
-                      <div style="height:10px;background:#ffe3f0;border:1px solid #ffb6d0;border-radius:999px;margin-top:6px;overflow:hidden;">
-                        <div style="height:100%;width:<?php echo max(0,min(100,$horizonPercent)); ?>%;background:#ff86b8;border-right:1px solid #ff2b83;<?php if (!$email_mode) { echo 'animation:popIn 500ms ease-out both;'; } ?>"></div>
                       </div>
                     </td>
                   </tr>
