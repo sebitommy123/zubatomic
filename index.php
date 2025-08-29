@@ -1,13 +1,13 @@
 <?php
   // Change these values; the UI will adjust automatically
-  $score = 7; // example
+  $score = 6; //example
   $just_increased = false; // set true to show a celebratory score-up animation
 
   // Email-friendly mode: disables animations and adds legacy attrs like bgcolor
   $email_mode = false;
 
   // Second metric: kisses (hardcoded, manually incremented when hitting kiss milestones)
-  $kisses = 3; // example
+  $kisses = 1; // example
   $kissPrizes = [
     [ 'name' => 'Hoodie', 'cost' => 20, 'img' => 'https://via.placeholder.com/64?text=H' ],
     [ 'name' => 'T-Shirt', 'cost' => 12, 'img' => 'https://via.placeholder.com/64?text=T' ],
@@ -143,7 +143,7 @@
                       <?php endif; ?>
 
                       <?php if (!$isCurrent && !$hasLabels): ?>
-                        <span style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:16px;color:#cc6a9a;">Keep going, cutie! 💗</span>
+                        <span style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:16px;color:#cc6a9a;">💗</span>
                       <?php endif; ?>
                     </td>
                   </tr>
