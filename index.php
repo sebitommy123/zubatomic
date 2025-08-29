@@ -1,7 +1,7 @@
 <?php
-  // Change this score value; the UI will adjust automatically
+  // Change these values; the UI will adjust automatically
   $score = 7; // example
-  $just_increased = false; // set to true to show a celebratory score-up animation
+  $just_increased = false; // set true to show a celebratory score-up animation
 
   // Ensure non-negative, since points start at 0
   if (!is_int($score)) { $score = (int)$score; }
@@ -11,16 +11,20 @@
   $maxPoint = $score + 20;
   $prevPoint = max(0, $score - 1);
 
-  // Simple helpers
-  function hasKiss($p) {
-    return ($p > 0) && ($p % 4 === 0);
-  }
-  function hasTrip($p) {
-    return ($p > 0) && ($p % 10 === 0);
-  }
-  function hasExperience($p) {
-    return ($p > 0) && ($p % 17 === 0);
-  }
+  // Generic repeating milestones: define label and repeats_every
+  // kind: 'icon' renders in the dot column as an emoji; 'pill' stacks as a label
+  $repeatingMilestones = [
+    [ 'label' => 'kiss', 'repeats_every' => 4,  'kind' => 'icon', 'icon' => '💋' ],
+    [ 'label' => 'trip', 'repeats_every' => 10, 'kind' => 'pill' ],
+    [ 'label' => 'experience', 'repeats_every' => 17, 'kind' => 'pill' ],
+  ];
+
+  // Custom, one-off milestones mapping (won't repeat)
+  // Example: 13 => ['netflix subscription'].
+  // You can add multiple per point: 21 => ['cute scrunchies', 'pink water bottle']
+  $customMilestones = [
+    13 => ['netflix subscription'],
+  ];
 ?>
 <!doctype html>
 <html lang="en">
@@ -32,7 +36,6 @@
   </head>
   <body style="margin:0;padding:0;background:#ffecf7;">
     <style>
-      /* Email clients support varies; these animations gracefully fail where unsupported */
       @keyframes popIn { 0% { transform: scale(0.7); opacity: 0.2; } 60% { transform: scale(1.06); opacity: 1; } 100% { transform: scale(1); } }
       @keyframes bounceSoft { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
       @keyframes pulseGlow { 0% { transform: scale(0.92); } 50% { transform: scale(1.06); } 100% { transform: scale(0.92); } }
@@ -61,10 +64,28 @@
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;border-spacing:0;">
                   <?php for ($p = $maxPoint; $p >= $minPoint; $p--) :
                     $isCurrent = ($p === $score);
-                    $kiss = hasKiss($p);
-                    $trip = hasTrip($p);
-                    $exp = hasExperience($p);
-                    $hasLabels = ($trip || $exp);
+
+                    // Determine icon and labels for this point using generic definitions
+                    $iconAtPoint = null; // e.g., kiss emoji
+                    $labels = [];
+
+                    foreach ($repeatingMilestones as $rm) {
+                      $every = isset($rm['repeats_every']) ? (int)$rm['repeats_every'] : 0;
+                      $kind  = isset($rm['kind']) ? $rm['kind'] : 'pill';
+                      if ($every > 0 && $p > 0 && $p % $every === 0) {
+                        if ($kind === 'icon' && $iconAtPoint === null) {
+                          $iconAtPoint = isset($rm['icon']) ? $rm['icon'] : '✨';
+                        } else {
+                          $labels[] = isset($rm['label']) ? $rm['label'] : 'milestone';
+                        }
+                      }
+                    }
+
+                    if (isset($customMilestones[$p]) && is_array($customMilestones[$p])) {
+                      $labels = array_merge($labels, $customMilestones[$p]);
+                    }
+
+                    $hasLabels = (count($labels) > 0);
                     $rowBg = $isCurrent ? '#fff3f9' : '#ffffff';
                   ?>
                   <tr>
@@ -75,10 +96,10 @@
                       </div>
                     </td>
 
-                    <!-- Line + dot column (continuous pink line as background) -->
+                    <!-- Line + dot/emoji column (continuous pink line as background) -->
                     <td width="24" valign="middle" align="center" style="width:24px;background:#ffd9ea;">
-                      <?php if ($kiss): ?>
-                        <span style="display:inline-block;font-size:16px;line-height:16px;margin:6px 0;animation:bounceSoft 2s ease-in-out infinite;">💋</span>
+                      <?php if ($iconAtPoint): ?>
+                        <span style="display:inline-block;font-size:16px;line-height:16px;margin:6px 0;animation:bounceSoft 2s ease-in-out infinite;"><?php echo htmlspecialchars($iconAtPoint, ENT_QUOTES, 'UTF-8'); ?></span>
                       <?php else: ?>
                         <span style="display:inline-block;width:12px;height:12px;background:#ff4da6;border-radius:999px;border:2px solid #ffffff;box-shadow:0 0 0 2px #ff97c2;margin:6px 0;<?php echo $isCurrent ? 'animation:pulseGlow 1.8s ease-in-out infinite;' : ''; ?>"></span>
                       <?php endif; ?>
@@ -87,17 +108,22 @@
                       <?php endif; ?>
                     </td>
 
-                    <!-- Labels column -->
+                    <!-- Labels column (stacked pills) -->
                     <td valign="middle" style="padding:8px 8px 8px 8px;background:<?php echo $rowBg; ?>;">
                       <?php if ($isCurrent): ?>
-                        <span style="display:inline-block;background:#ffe3f0;border:1px solid #ffb6d0;color:#ff2b83;border-radius:999px;padding:4px 10px;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;margin-right:6px;animation:popIn 500ms ease-out both;">You are here ✨</span>
+                        <span style="display:inline-block;background:#ffe3f0;border:1px solid #ffb6d0;color:#ff2b83;border-radius:999px;padding:4px 10px;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;margin-right:0;margin-bottom:6px;animation:popIn 500ms ease-out both;">You are here ✨</span>
                       <?php endif; ?>
 
-                      <?php if ($trip): ?>
-                        <span style="display:inline-block;background:#ffe3f0;border:1px solid #ffb6d0;color:#ff2b83;border-radius:999px;padding:4px 10px;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;margin-right:6px;animation:twinkle 3s ease-in-out infinite;">trip</span>
-                      <?php endif; ?>
-                      <?php if ($exp): ?>
-                        <span style="display:inline-block;background:#ffe3f0;border:1px solid #ffb6d0;color:#ff2b83;border-radius:999px;padding:4px 10px;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;margin-right:6px;animation:twinkle 3s ease-in-out infinite;">experience</span>
+                      <?php if ($hasLabels): ?>
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                          <?php foreach ($labels as $label): ?>
+                            <tr>
+                              <td style="padding:0 0 6px 0;">
+                                <span style="display:block;background:#ffe3f0;border:1px solid #ffb6d0;color:#ff2b83;border-radius:12px;padding:6px 10px;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:12px;line-height:14px;word-break:break-word;animation:twinkle 3s ease-in-out infinite;"><?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?></span>
+                              </td>
+                            </tr>
+                          <?php endforeach; ?>
+                        </table>
                       <?php endif; ?>
 
                       <?php if (!$isCurrent && !$hasLabels): ?>
@@ -122,4 +148,3 @@
     </table>
   </body>
   </html>
-
